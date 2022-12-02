@@ -1,3 +1,10 @@
+/* @author: Ahmad Baig
+*
+* Version 2.0
+* Description: this program allows you to scan a file with names and phone num. Then it allows you to search up names (last, first)
+* then gives theres phonenumber. Or you could search by there phonenum (nnn-nnn-nnnn) and you coule get there name.
+*/
+
 import java.util.Scanner;
 import java.io.*;
 
