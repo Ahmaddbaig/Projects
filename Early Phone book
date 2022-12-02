@@ -1,0 +1,115 @@
+/*
+* @ author: Ahmad Baig
+*
+* verion: 1.0
+* Description: this tells you if two names in a file are the same and will give you a warning.
+*/
+
+
+
+import java.util.Scanner;
+import java.io.*;
+
+class PhonebookEntry {
+
+    private Name name;
+    private PhoneNumber phoneNumber;
+
+    public PhonebookEntry(Name name, PhoneNumber phoneNumber) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Name getName() {
+        return name;
+    }
+
+    public PhoneNumber getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void call() {
+        if (phoneNumber.isTollFree()) {
+            System.out.println("Dialing (toll-free) " + this.name.getFormal() + ": "
+                    + this.phoneNumber.toString() + "\n");
+        } else {
+            System.out.println("Dialing " + this.name.getFormal() + ": "
+                    + this.phoneNumber.toString() + "\n");
+        }
+    }
+
+    public String toString() {
+        return "phone book entry: "
+                + this.name.getFormal() + ": "
+                + this.phoneNumber.toString();
+    }
+
+    public boolean equals(PhonebookEntry other) {
+        return name.equals(other.name)
+                && phoneNumber.equals(other.phoneNumber);
+    }
+
+    public static PhonebookEntry read(Scanner scanner) {
+        if (!scanner.hasNext()) {
+            return null;
+        }
+        String last = scanner.next();
+        String first = scanner.next();
+        Name name = new Name(last, first);
+        String number = scanner.next();
+        PhoneNumber num = new PhoneNumber(number);
+        return new PhonebookEntry(name, num);
+    }
+
+    public static PhonebookEntry read2(Scanner scanner) {
+        if (!scanner.hasNext()) {
+            String last = "";
+            String first = "";
+
+            Name name = new Name(last, first);
+            String number = "";
+            PhoneNumber num = new PhoneNumber(number);
+            return new PhonebookEntry(name, num);
+        }
+        String last = scanner.next();
+        String first = scanner.next();
+        Name name = new Name(last, first);
+        String number = scanner.next();
+        PhoneNumber num = new PhoneNumber(number);
+        return new PhonebookEntry(name, num);
+    }
+
+    public static void main(String[] args) throws Exception {
+        Scanner scanner = new Scanner(new File("phonebook.text"));
+        Scanner scanner2 = new Scanner(new File("phonebook.text"));
+        PhonebookEntry test = read(scanner);
+        PhonebookEntry test1 = read2(scanner2);
+        test1 = read2(scanner2);
+        int count = 0;
+        while (test != null) {
+            if (test.equals(test1)) {
+                System.out.println("phone book entry: " + test.getName() +": " + test.getPhoneNumber());
+                test.call();
+                System.out.println("Duplicate phone book entry \"" + test.getName().getFormal() + ": " + test.getPhoneNumber().toString() + "\" discovered");
+                count++;
+                test = read(scanner);
+                test1 = read2(scanner2);
+
+            } else if (test.getName().equals(test1.getName())) {
+                System.out.println("phone book entry: " + test.getName().getFormal() + ": " + test.getPhoneNumber().toString());
+                test.call();
+
+                System.out.println("Warning duplicate name encountered \"" + test.getName().getFormal() + ": " + test1.getPhoneNumber().toString() + "\" discovered");
+
+            } else {
+                System.out.println("phone book entry: " + test.getName().getFormal() + ": " + test.getPhoneNumber().toString());
+                test.call();
+            }
+            count++;
+            test = read(scanner);
+            test1 = read2(scanner2);
+        }
+        System.out.println("---");
+        System.out.println(count + " phonebook entries processed.");
+    }
+}
