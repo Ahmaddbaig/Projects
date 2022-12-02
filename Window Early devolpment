@@ -1,0 +1,59 @@
+/*
+* @ author: Ahmad Baig
+*
+* Version: 1.0
+* Description: this minimizes and displays a window tab still in early development.
+*/
+
+
+import java.util.Scanner;
+import java.util.*;
+public abstract class Window {
+    private int height,width;
+    private boolean v=false,m=false;
+    
+    public Window(int w,int h){
+        this.width=w;
+        this.height=h;
+    }
+    public void display(){
+        if(!v){
+            System.out.println("(Nothing to see here)");
+        } else if (m){
+            //System.out.println(".......................");
+            System.out.println("[a "+this.width+"x"+this.height+" minimal window (minimized)]");
+            this.m=false;
+            //System.out.println(".......................");
+        }else if(!m){
+            System.out.println(".......................");
+            System.out.println(":a "+this.width+"x"+this.height+" minimal window:");
+            System.out.println(".......................");
+        } else{
+            displayNormal();
+        }
+    }
+    public abstract void displayNormal();
+   
+    public void resize(int w,int h){
+        this.width=w;
+        this.height=h;
+    }
+    public void minimize(){
+        this.m=true;
+    }
+    public int getHeight(){
+        return height;
+    }
+    public int getWidth(){
+        return width;
+    }
+    public void setVisible(boolean v){
+        this.v=v;
+    }
+    public void isVisible(){
+        this.v=true;
+    }
+    public void restore(){
+        
+    }
+}
