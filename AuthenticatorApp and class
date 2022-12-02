@@ -1,0 +1,115 @@
+/*
+* @ author: Ahmad Baig
+*
+* Version 2.0
+*
+* Description:this allows you to pass in a file witha user name hint and password. Them promptyes you to enter the username with the crorrect pass.
+* if you dont get the. correct pass it will give you a hint. If pass is wrong three times it will say too many failed attempts then log you out.
+*/
+
+
+
+import java.io.*;
+import java.util.Scanner;
+
+class AuthenticatorApp {
+
+    private User[] user = new User[100];
+    private int size = 0;
+    private int counter = 0;
+    private boolean is = false;
+
+    public AuthenticatorApp(String name) throws Exception {
+        Scanner se = new Scanner(new File(name));
+        while (se.hasNext() && size <= 100) {
+            user[size] = User.read(se);
+            size++;
+        }
+
+    }
+
+    public void authenticate(String username, String password) throws Exception {
+        boolean found = false;
+        int j = 0;
+        for (int i = 0; i < this.size; i++) {
+            if (username.equals(user[i].getUsername())) {
+                found = true;
+                j = i;
+            }
+        }
+        if (!found) {
+            System.out.println("user " + username + " not found");
+            is = true;
+        } else if (!(this.user[j].verifyPassword(password))) {
+            counter++;
+            throw new Exception("*** Invalid password - hint: " + user[j].getHint());
+        } else {
+            is = true;
+            System.out.println("Welcome to the system");
+        }
+
+    }
+
+    public static void main(String[] args) throws Exception {
+        AuthenticatorApp check = new AuthenticatorApp("users.data");
+        Scanner sc = new Scanner(System.in);
+
+        while (check.is == false && check.counter < 3) {
+            try {
+                System.out.print("username? ");
+                String username = sc.nextLine();
+                System.out.print("password? ");
+                String password = sc.nextLine();
+                check.authenticate(username, password);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+            if (check.counter == 3) {
+                System.out.println("Too many failed attempts... please try again later");
+                break;
+            }
+
+        }
+
+    }
+}
+
+// version 1.0
+
+class Authenticator {
+
+    private User[] user = new User[100];
+    private int size = 0;
+    private int counter = 0;
+    private boolean is = false;
+
+    public Authenticator(String name) throws Exception {
+            Scanner se = new Scanner(new File(name));
+            while (se.hasNext() && size <= 100) {
+                user[size] = User.read(se);
+                size++;
+            }
+
+    }
+    public void authenticate(String username, String password) throws Exception {
+        boolean found = false;
+        int index = 0;
+        for (int i = 0; i < this.size; i++) {
+            if (username.equals(user[i].getUsername())) {
+                found = true;
+                index = i;
+            }
+        }
+        if (!found) {
+            System.out.println("user " + username + " not found");
+            is= true;
+        } else if (!(this.user[index].verifyPassword(password))) {
+            counter++;
+            throw new Exception("Invalid password - hint: " + user[index].getHint());
+            
+        } else {
+            is = true;
+        }
+
+    }
+}
