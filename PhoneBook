@@ -1,0 +1,283 @@
+import java.util.Scanner;
+import java.io.*;
+
+public class PhonebookApp {
+    public static void main(String[] args) throws Exception {
+        int l = 0, r = 0;
+        File sc = new File("phonebook.text");
+        try {
+            Scanner se = new Scanner(sc);
+            phonebook sending = new phonebook(se);
+            String choice = " ";
+            Scanner choicee = new Scanner(System.in);
+            while (!choice.equals("q")) {
+                System.out.print("lookup, reverse-lookup, quit (l/r/q)? ");
+                choice = choicee.next();
+                switch (choice) {
+
+                    case "l":
+                        System.out.print("last name? ");
+                        String lastname = choicee.next();
+                        System.out.print("first name? ");
+                        String firstname = choicee.next();
+                        l++;
+                        sending.find(lastname, firstname);
+                        System.out.println();
+                        break;
+
+                    case "r":
+                        System.out.print("phone number (nnn-nnn-nnnn)? ");
+                        String num = choicee.next();
+                        r++;
+                        sending.reverselookup(num);
+                        System.out.println();
+                        break;
+
+                    case "q":
+                        System.out.println();
+                        System.out.println(l + " lookups performed\n" + r + " reverse lookups performed");
+                        break;
+
+                    default:
+                        
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("***IOException*** " + sc + " (No such file or Directory)");
+            //System.out.println(e.getMessage());
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+}
+class phonebook {
+
+public phonebook(Scanner scanner) throws FileNotFoundException, Exception {
+    phonebook = new PhonebookEntry[100];
+    size = 0;
+    //Scanner fileScanner = new Scanner(scanner);
+    while (scanner.hasNext()) {
+    PhonebookEntry read = PhonebookEntry.read(scanner);
+    if (size >= phonebook.length) {
+    throw new Exception("*** Exception *** Phonebook capacity exceeded" + " - increase size of underlying array");
+    }
+    phonebook[size] = read;
+    size++;
+    }
+ }
+ public void find(String last, String first) {
+    name = new Name(last, first);
+    boolean found = true;
+    for (int i = 0; i < size; i++) {
+    PhonebookEntry read = phonebook[i];
+    if (name.equals(read.getName())) {
+    System.out.println(name.getFormal() + "'s phone number is "+ read.getPhoneNumber());
+    found = false;
+         } 
+    } if (found){
+         System.out.println("-- Name not found");
+    }
+    
+ }
+ public void reverselookup(String phone) {
+    Number = new PhoneNumber(phone);
+    boolean found = true;
+    for (int i = 0; i < size; i++) {
+    PhonebookEntry read = phonebook[i];
+    if (Number.equals(read.getPhoneNumber())) {
+    System.out.println(Number + " belongs to "+ read.getName());
+    found = false;
+    }
+ }
+    if (found) {
+    System.out.println("-- Phone number not found");
+    }
+ }
+ 
+  private Name name;
+  private PhoneNumber Number;
+  private PhonebookEntry phonebook[];
+  private int size;
+
+ 
+}
+class Name {
+
+    public Name(String last, String first) {
+        this.last = last;
+        this.first = first;
+    }
+
+    public Name(String first) {
+        this("", first);
+    }
+
+    public String getFormal() {
+        return first + " " + last;
+    }
+
+    public String getOfficial() {
+        return last + ", " + first;
+    }
+
+    public String getInitials() {
+        return first.charAt(0) + "." + last.charAt(0) + ".";
+    }
+
+    public boolean equals(Name other) {
+        return first.equals(other.first) && last.equals(other.last);
+    }
+
+    public String toString() {
+        return first + " " + last;
+    }
+
+    public static Name read(Scanner scanner) {
+        if (!scanner.hasNext()) {
+            return null;
+        }
+        String last = scanner.next();
+        String first = scanner.next();
+        return new Name(last, first);
+    }
+
+    public static Name dupRead(Scanner scanner) {
+        if (!scanner.hasNext()) {
+            String last = "";
+            String first = "";
+            return new Name(last, first);
+        }
+        String last = scanner.next();
+        String first = scanner.next();
+        return new Name(last, first);
+    }
+    private String first, last;
+}
+class PhonebookEntry {
+
+    private Name name;
+    private PhoneNumber phoneNumber;
+
+    public PhonebookEntry(Name name, PhoneNumber phoneNumber) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Name getName() {
+        return name;
+    }
+
+    public PhoneNumber getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void call() {
+        if (phoneNumber.isTollFree()) {
+            System.out.println("Dialing (toll-free) " + this.name.getFormal() + ": "
+                    + this.phoneNumber.toString() + "\n");
+        } else {
+            System.out.println("Dialing " + this.name.getFormal() + ": "
+                    + this.phoneNumber.toString() + "\n");
+        }
+    }
+
+    public String toString() {
+        return "phone book entry: "
+                + this.name.getFormal() + ": "
+                + this.phoneNumber.toString();
+    }
+
+    public boolean equals(PhonebookEntry other) {
+        return name.equals(other.name)
+                && phoneNumber.equals(other.phoneNumber);
+    }
+
+    public static PhonebookEntry read(Scanner scanner) {
+        if (!scanner.hasNext()) {
+            return null;
+        }
+        String last = scanner.next();
+        String first = scanner.next();
+        Name name = new Name(last, first);
+        String number = scanner.next();
+        PhoneNumber num = new PhoneNumber(number);
+        return new PhonebookEntry(name, num);
+    }
+
+    public static PhonebookEntry read2(Scanner scanner) {
+        if (!scanner.hasNext()) {
+            String last = "";
+            String first = "";
+
+            Name name = new Name(last, first);
+            String number = "";
+            PhoneNumber num = new PhoneNumber(number);
+            return new PhonebookEntry(name, num);
+        }
+        String last = scanner.next();
+        String first = scanner.next();
+        Name name = new Name(last, first);
+        String number = scanner.next();
+        PhoneNumber num = new PhoneNumber(number);
+        return new PhonebookEntry(name, num);
+    }
+}
+
+class PhoneNumber {
+
+    public PhoneNumber(String phone) {
+        this.phone = phone;
+    }
+
+    public PhoneNumber() {
+        this("");
+    }
+
+    public String areacode() {
+        return phone.substring(1, 4);
+    }
+
+    public String exchange() {
+        return phone.substring(5, 8);
+    }
+
+    public String lineNum() {
+        return phone.substring(9, 13);
+    }
+
+    public boolean equals(PhoneNumber other) {
+        return phone.equals(other.phone);
+    }
+
+    public String toString() {
+        return phone;
+    }
+
+    public static PhoneNumber read(Scanner scanner) {
+        if (!scanner.hasNext()) {
+            return null;
+        }
+        String num = scanner.next();
+        return new PhoneNumber(num);
+    }
+
+    public static PhoneNumber read1(Scanner scanner) {
+        if (!scanner.hasNext()) {
+            //return null;
+            String num = "";
+            return new PhoneNumber(num);
+        }
+        String num = scanner.next();
+        return new PhoneNumber(num);
+    }
+
+    public boolean isTollFree() {
+        if (phone.substring(1, 2).equals("8")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    private String phone;
+
+}
