@@ -105,7 +105,6 @@ public phonebook(Scanner scanner) throws FileNotFoundException, Exception {
   private PhoneNumber Number;
   private PhonebookEntry phonebook[];
   private int size;
-
  
 }
 class Name {
