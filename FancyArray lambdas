@@ -1,0 +1,172 @@
+// @ author: Ahmad Baig
+// Description: this version of the code implements lambda expressions.
+
+import java.util.function.*;
+import java.util.*;
+class FancyArray<E> {
+
+    private E[] array;
+    private int size;
+
+    public FancyArray() {
+        this(10);
+    }
+
+    public void addTo(FancyArray<? super E> e) {
+        for (int i = 0; i < this.size; i++) {
+            e.add(array[i]);
+        }
+    }
+
+    public FancyArray(int capacity) {
+        if (capacity < 0) {
+            throw new IllegalArgumentException("invalid");
+        }
+        array = (E[]) new Object[capacity];
+        size = 0;
+    }
+
+    public void add(E element) {
+        if (size == array.length) {
+            throw new IllegalStateException("Array is full.");
+        }
+        array[size++] = element;
+    }
+
+    public E get(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("index out of bounds");
+        }
+        return array[index];
+    }
+
+    public E set(int index, E newElement) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("index out of bounds");
+        }
+        E oldElement = array[index];
+        array[index] = newElement;
+        return oldElement;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public boolean contains(E element) {
+        for (int i = 0; i < size; i++) {
+            if (array[i].equals(element)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        if (size == 0) {
+            return "[]";
+        }
+        String result = "[";
+        for (int i = 0; i < size - 1; i++) {
+            result += array[i] + ", ";
+        }
+        result += array[size - 1] + "]";
+        return result;
+    }
+
+    public boolean equals(Object o) {
+        if (o instanceof FancyArray) {
+            FancyArray x = (FancyArray) o;
+            return toString().equals(x.toString());
+        }
+        return false;
+    }
+
+    public int indexOf(E e) {
+        for (int i = 0; i < size; i++) {
+            if (array[i].equals(e)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int lastIndexOf(E e) {
+        for (int i = size - 1; i >= 0; i--) {
+            if (array[i].equals(e)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public void add(int index, E element) {
+        if (size == array.length) {
+            throw new IllegalStateException("Array is full.");
+        }
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("index out of bounds");
+        }
+        for (int i = size; i > index; i--) {
+            array[i] = array[i - 1];
+        }
+        array[index] = element;
+        size++;
+    }
+
+    public E remove(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("index out of bounds");
+        }
+        E removed = array[index];
+        for (int i = index; i < size - 1; i++) {
+            array[i] = array[i + 1];
+        }
+        size--;
+        return removed;
+    }
+
+    public void addFrom(FancyArray<? extends E> e) {
+        for (int i = 0; i < e.size; i++) {
+            this.add(e.get(i));
+        }
+    }
+    public void forEach(Consumer<? super E> e) {
+        for (int i = 0; i < size; i++) {
+            e.accept(array[i]);
+        }
+    }
+
+    public void replaceAll(UnaryOperator<E> other) {
+        for (int i = 0; i < size; i++) {
+            array[i] = other.apply(array[i]);
+        }
+    }
+  
+
+    public E max(Comparator<? super E> e) {
+        E test = array[0];
+        for (int i = 1; i < size; i++) {
+            if (e.compare(array[i], test) > 0) {
+                test = array[i];
+            }
+
+        }
+        return test;
+    }
+
+    public void sort(Comparator<? super E> other) {
+        E test;
+        for (int i = 0; i < size - 1; i++) {
+            for (int j = (i + 1); j < size; j++) {
+                if (other.compare(array[i], array[j]) > 0) {
+                    test = array[j];
+                    array[j] = array[i];
+                    array[i] = test;
+                }
+            }
+        }
+    }
+
+}
