@@ -1,3 +1,8 @@
+################################
+# Author: Ahmad Baig
+# Version 1.0
+# Description: 
+################################
 from sudoku import Sudoku
 import queue
 import copy
