@@ -1,0 +1,215 @@
+from sudoku import Sudoku
+import queue
+import copy
+import time
+
+'''
+Parameters: Takes as input the curr_board state and the puzzle
+Returns: True if the current board state is the goal and False if not
+Note: Existing version solves the puzzle everytime you test for goal
+      feel free to change the implementation to save time
+'''
+def test_goal(curr_board,puzzle):
+    puzzle_solution=puzzle.solve()
+    try:
+        solution_board=puzzle_solution.board
+        for i in range(len(solution_board)):
+            for j in range(len(solution_board[i])):
+                assert(curr_board[i][j]==solution_board[i][j])
+        return True
+    except Exception as e:
+        return False
+
+'''
+Parameters: Takes as input a puzzle board and puzzle size
+Returns: True if the puzzle board is valid and False if not
+'''
+def valid_puzzle(puzzle_size,puzzle_board):
+    puzzle = Sudoku( puzzle_size , board = puzzle_board)
+    return puzzle.validate()
+
+'''
+Parameters: Takes as input a puzzle board
+Returns: Returns all the cells in the grid that are empty
+'''
+def empty_cells(puzzle_board):
+    empty_cell_list=[]
+    for i in range(len(puzzle_board)):
+        for j in range(len(puzzle_board[i])):
+            if puzzle_board[i][j] is None:
+                empty_cell_list.append([i,j])
+    return empty_cell_list
+
+'''
+params: Takes the current puzzle as input
+Return: The puzzle board corresponding to the goal
+Note: You can modify the function definition as you see fit
+'''
+def bfs(puzzle):
+    n = puzzle.size
+    frontier = queue.Queue()
+    frontier.put(puzzle)
+    visited = set()
+    while not frontier.empty():
+        cboard = frontier.get()
+
+        visited.add(cboard)
+
+        if test_goal(cboard.board, puzzle):
+            return cboard
+
+        ec_list = empty_cells(cboard.board)
+        for cell in ec_list:
+            for value in range(1, n+1):
+                new_board = copy.deepcopy(cboard)
+                new_board.board[cell[0]][cell[1]] = value
+                if new_board not in visited:
+                    frontier.put_nowait(new_board)
+
+    return None
+
+'''
+params: Takes the current puzzle as input
+Return: The puzzle board corresponding to the goal
+Note: You can modify the function definition as you see fit
+'''
+def dfs(puzzle):
+    #Write Code here
+    n = puzzle.size
+    frontier = queue.LifoQueue()
+    frontier.put_nowait(puzzle)
+    visited = set()
+
+    while not frontier.empty():
+        cboard = frontier.get_nowait()
+
+        visited.add(cboard)
+
+        if test_goal(cboard.board, puzzle):
+            return cboard
+
+        ec_list = empty_cells(cboard.board)
+        for cell in ec_list:
+            for value in range(1, n + 1):
+                new_board = copy.deepcopy(cboard)
+                new_board.board[cell[0]][cell[1]] = value
+                if new_board not in visited:
+                    frontier.put_nowait(new_board)
+    return None
+
+'''
+params: Takes the current puzzle as input
+Return: The puzzle board corresponding to the goal
+Note: You can modify the function definition as you see fit
+'''
+def bfs_with_prunning(puzzle):
+    #Write Code here
+    n = puzzle.size
+    frontier = queue.Queue()
+    frontier.put_nowait(puzzle)
+    while not frontier.empty():
+        puzz = frontier.get_nowait()
+
+        if test_goal(puzz.board, puzzle):
+            return puzz
+
+        ec_list = empty_cells(puzz.board)
+        for cell in ec_list:
+            for value in range(1, n + 1):
+                new_board = Sudoku(puzzle.height, board=puzz.board)
+                new_board.board[cell[0]][cell[1]] = value
+
+                if new_board.validate():
+
+                    frontier.put_nowait(new_board)
+    return None
+
+'''
+params: Takes the current puzzle as input
+Return: The puzzle board corresponding to the goal
+Note: You can modify the function definition as you see fit
+'''
+def dfs_with_prunning(puzzle):
+    # Write Code here
+    n = puzzle.size
+    frontier = queue.LifoQueue()
+    frontier.put_nowait(puzzle)
+
+    while not frontier.empty():
+        puzz = frontier.get_nowait()
+
+        if test_goal(puzz.board, puzzle):
+            return puzz
+
+        ec_list = empty_cells(puzz.board)
+        for cell in ec_list:
+            for value in range(1, n + 1):
+                new_board = Sudoku(puzzle.height, board=puzz.board)
+                new_board.board[cell[0]][cell[1]] = value
+                if new_board.validate():
+                    frontier.put_nowait(new_board)
+
+    return None
+
+#ip = input("Enter BFS, BFSP, DFS, DFSP, Q: ")
+if __name__ == "__main__":
+    puzzle = Sudoku(2).difficulty(0.2)
+    puzzle.show()
+    #print(dfs(puzzle))
+    '''solution = dfs(puzzle)
+    if solution is not None:
+        print(solution)
+    else:
+        print("Not found")
+
+    solution_path1 = dfs(puzzle)
+    if solution_path1 is not None:
+        print(solution_path1)
+    else:
+        print("Not found")'''
+boolean = True
+while True:
+    ip = input("Enter BFS, BFSP, DFS, DFSP, Q: ")
+    if ip.lower() == "bfs":
+        print("Running: ")
+        stime = time.time()
+        solution_path1 = bfs(puzzle)
+        etime = time.time()
+        if solution_path1 is not None:
+            print("Solution found:", solution_path1)
+            boolean = False
+    elif ip.lower() == "dfs":
+        print("Running: ")
+        stime = time.time()
+        solution_path1 = dfs(puzzle)
+        etime = time.time()
+        if solution_path1 is not None:
+            print("Solution found:", solution_path1)
+            boolean = False
+    elif ip.lower() == "bfsp":
+        print("Running: ")
+        stime = time.time()
+        solution_path1 = bfs_with_prunning(puzzle)
+        etime = time.time()
+        if solution_path1 is not None:
+            print("Solution found:", solution_path1)
+            boolean = False
+    elif ip.lower() == "dfsp":
+        print("Running: ")
+        stime = time.time()
+        solution_path1 = dfs_with_prunning(puzzle)
+        etime = time.time()
+        if solution_path1 is not None:
+            print("Solution found:", solution_path1)
+            boolean = False
+    elif ip.lower() == "q":
+       # boolean = False
+        break
+    elif ip.lower() == "q":
+        print("quitting")
+        break
+    else:
+        print("bad input")
+        continue
+    ttime = etime-stime
+    print(ttime)
